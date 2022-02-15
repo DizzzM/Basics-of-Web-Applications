@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Lab 3, Client page</title>
+	<link rel="stylesheet" href="style1.css">
+</head>
+<body>
+
+<div class="form">
+<div class="slider">
+    <button id="prevButton"> <<< </button>
+  	<div class="item">
+        <label id = "itemContent">
+            SLIDER
+        </label>
+    </div>
+    <button id="nextButton"> >>> </button>
+</div>
+<a href="index2.html">To admin page</a>
+</div>
+<script type="module">
+
+    import { initializeApp }
+        from 'https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js';
+    import {getDatabase, ref, child, get, onChildChanged}
+        from 'https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js';
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAbwdXPSnD5bfN5GnijEHcGbZW3lS0H-kg",
+        authDomain: "lab3-8bea9.firebaseapp.com",
+        projectId: "lab3-8bea9",
+        storageBucket: "lab3-8bea9.appspot.com",
+        messagingSenderId: "838358364804",
+        appId: "1:838358364804:web:4db0e38af03d3bfb3288d1",
+        measurementId: "G-YCNJ97290T"
+    };
+
+    var app = initializeApp(firebaseConfig);
+    var slideIndex = 0;
+    var contents = new Array();
+
+    onChildChanged(ref(getDatabase()), (data) => {
+        let toReload = confirm('Content on cloud was reloaded. Confirm page refreshing:')
+        if (toReload)
+            location.reload();
+    });
+
+    window.onload = ()=>{
+        ReadDb();
+    }
+
+    function ReadDb(){
+        const dbRef = ref(getDatabase());
+        contents=[];
+        get(child(dbRef, 'contents')).then(snapshot=>{
+            snapshot.forEach(item=>{
+                contents.push(item.val());
+            })
+        });
+    }
+
+    function nextSlide() {
+
+            slideIndex += 1;
+            showSlides();
+    }
+
+    function prevSlide() {
+
+        slideIndex += -1;
+        showSlides();
+    }
+
+    function showSlides() {
+        if (slideIndex > contents.length - 1) {
+            slideIndex = 0;
+        }
+        if (slideIndex < 0) {
+            slideIndex = contents.length - 1;
+        }
+        let value = contents[slideIndex];
+        console.log(value);
+        let itemContent = document.getElementById('itemContent');
+        itemContent.textContent = contents[slideIndex];
+    }
+
+    let prev = document.getElementById('prevButton')
+    let next = document.getElementById('nextButton')
+    prev.addEventListener("click", prevSlide)
+    next.addEventListener("click", nextSlide);
+
+    function arraysEqual(a, b) {
+        if (a === b) return true;
+        if (a == null || b == null) return false;
+        if (a.length !== b.length) return false;
+
+
+        for (var i = 0; i < a.length; ++i) {
+            if (a[i] !== b[i]) return false;
+        }
+        return true;
+    }
+</script>
+</body>
+</html>

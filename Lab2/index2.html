@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="styles.css">
+    <title>Lab 2, Page 2</title>
+</head>
+<body onload="Swap();Validate()">
+<header class="menu top">
+    <h1 id="x">Carpe Diem</h1>
+    <p style="margin-left: 55%">Lorem ipsum dolor sit amet.</p>
+</header>
+    <main class="center">
+        <aside class="info">
+            <ol>
+                <li>
+                    Lorem ipsum dolor sit amet.
+                </li>
+                <li>
+                    Lorem ipsum dolor sit amet.
+                </li>
+                <li>
+                    Lorem ipsum dolor sit amet.
+                </li>
+                <li>
+                    Lorem ipsum dolor sit amet.
+                </li>
+                <li>
+                    Lorem ipsum dolor sit amet.
+                </li>
+            </ol>
+        </aside>
+        <div class="right">
+            <nav class="nav">
+                <a href="index1.html"> PAGE 1</a>
+                <a href="index2.html" style="color:#2ccae0"> PAGE 2</a>
+                <a href="index3.html"> PAGE 3</a>
+                <a href="index4.html"> PAGE 4</a>
+                <a href="index5.html"> PAGE 5</a>
+            </nav>
+            <div class="filler">
+                <section class="script">
+                    <div style="flex-direction: column; align-items: center">
+                        <div style="background-color: rgba(255,255,255,0.4); padding: 20px; display: flex; flex-direction: column; justify-content: space-evenly;">
+                            <form style="display: flex; flex-direction: column; align-items: center;">
+                                <div style="width: 80%; display: flex;">
+                                    <label style="display:flex; align-items: center" for="numbers">
+                                Input your numbers
+                                    </label>
+                                    <input style="margin-left: 5px; text-align: center; padding: 3px" id="numbers"/>
+                                </div>
+                                <div style=" display: flex; justify-content: space-evenly;">
+                                    <button style="padding: 5px 25px; margin-top: 5px;" onclick="MinMax()" id='accept'>Calculate</button>
+                                </div>
+                            </form>
+                            <div style="display:flex; align-items: center">
+                        Enter 10 numbers, seperated by whitespace into the input field
+                            </div>
+                        </div>
+                        <button onclick="Area()" style="width: 50%;margin: 4px">Calculate area</button>
+
+                        <p id="result">
+
+                        </p>
+                    </div>
+                </section>
+                <aside class="info">
+                    <div style="display: flex; flex-direction: column">
+                    <p style=" display: flex; height: 100%; width: 100%; vertical-align: center; align-items: center; ">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi assumenda commodi, cumque deleniti dicta dolor dolorum ea error esse fuga illo ipsum labore laborum neque non odio omnis placeat porro possimus provident quia quidem quod reiciendis sapiente sed soluta velit, veniam? Est et fugit labore minus numquam ratione voluptatem voluptatum. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi assumenda commodi, cumque deleniti dicta dolor dolorum ea error esse fuga illo ipsum labore laborum neque non odio omnis placeat porro possimus provident quia quidem quod reiciendis sapiente sed soluta velit, veniam? Est et fugit labore minus numquam ratione voluptatem voluptatum. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi assumenda commodi, cumque deleniti dicta dolor dolorum ea error esse fuga illo ipsum labore laborum neque non odio omnis placeat porro possimus provident quia quidem quod reiciendis sapiente sed soluta velit, veniam? Est et fugit labore minus numquam ratione voluptatem voluptatum.
+                    </p>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+    <footer class="menu bottom">
+        <p style="margin-right: 55%">Lorem ipsum dolor sit amet.</p>
+        <h2 id="y">Memento Mori</h2>
+    </footer>
+    <script src="showMinMax.js"></script>
+    <script src="swap.js"></script>
+    <script src="calculateArea.js"></script>
+</body>
+</html>

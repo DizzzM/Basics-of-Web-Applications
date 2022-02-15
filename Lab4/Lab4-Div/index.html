@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 4</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="form">
+    <button id="play">Play</button>
+    <div id="log">
+
+    </div>
+    <div id="work">
+        <div class="controls">
+            <button id="start">Start</button>
+            <button id="stop">Stop</button>
+            <button id="reload">Reload</button>
+            <button id="close">Close</button>
+            <label id="action"></label>
+        </div>
+        <div id="anim">
+            <div id="square">
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="module">
+    import { initializeApp }
+        from 'https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js';
+    import {getDatabase, ref, child, get, onChildChanged}
+        from 'https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js';
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAbwdXPSnD5bfN5GnijEHcGbZW3lS0H-kg",
+        authDomain: "lab3-8bea9.firebaseapp.com",
+        projectId: "lab3-8bea9",
+        storageBucket: "lab3-8bea9.appspot.com",
+        messagingSenderId: "838358364804",
+        appId: "1:838358364804:web:4db0e38af03d3bfb3288d1",
+        measurementId: "G-YCNJ97290T"
+    };
+
+    let app = initializeApp(firebaseConfig);
+    const databaseRef = ref(getDatabase());
+
+    let color = ""
+    let size = 0;
+
+    function getData(){
+        get(child(databaseRef, 'color')).then((snapshot)=>{
+            color=snapshot._node.value_;
+        });
+        get(child(databaseRef, 'size')).then((snapshot)=>{
+            size=snapshot._node.value_;
+        });
+        get(child(databaseRef, 'interval')).then((snapshot)=>{
+            interval=snapshot.val();
+        });
+    }
+    onChildChanged(ref(getDatabase()), (data) => {
+        let toReload = confirm('Content on cloud was reloaded. Confirm page refreshing:')
+        if (toReload)
+            location.reload();
+    });
+    let previousJump = 1;
+    let index = 0;
+    let maxTop=0;
+    let maxRight=0;
+    let maxBottom=0;
+    let maxLeft=0;
+    let startTop=0;
+    let startLeft=0
+    let startBottom=0;
+    let startRight=0;
+    let square = document.getElementById('square');
+    let anim = document.getElementById('anim')
+    let label = document.getElementById('action')
+    let smth = 0;
+    let interval = 0;
+
+    const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+
+    document.getElementById('play').addEventListener('click',()=>{
+        localStorage.clear();
+        getData();
+
+        document.getElementById('log').style.display='none';
+        document.getElementById('work').style.display='flex';
+        document.getElementById('play').style.display='none';
+        document.getElementById('stop').style.display='none';
+        document.getElementById('start').style.display='flex';
+        document.getElementById('reload').style.display='none';
+        maxTop=window.getComputedStyle(square).marginTop;
+        maxRight=window.getComputedStyle(square).marginLeft;
+        maxBottom=window.getComputedStyle(square).marginTop;
+        maxLeft=window.getComputedStyle(square).marginLeft;
+
+        startTop=window.getComputedStyle(square).marginTop;
+        startLeft=window.getComputedStyle(square).marginLeft;
+        startRight=window.getComputedStyle(square).marginLeft;
+        startBottom=window.getComputedStyle(square).marginTop;
+        let today = new Date();
+        let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        localStorage.setItem(time," button 'play' was pressed\n")
+        label.innerHTML="'Play' pressed";
+    })
+    document.getElementById('close').addEventListener('click',()=>{
+        let today = new Date();
+        let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        localStorage.setItem(time," button 'close' was pressed\n")
+        console.log(localStorage);
+        document.getElementById('work').style.display='none';
+        document.getElementById('play').style.display='flex';
+        clearInterval(smth);
+        document.getElementById('log').style.display='flex';
+        label.innerHTML="'Close' pressed";
+        let string = "";
+        let i = 0;
+        for(i=0; i < localStorage.length;i++)
+        {
+            string+=localStorage.key(i)+localStorage.getItem(localStorage.key(i))+"<br>";
+        }
+        document.getElementById('log').innerHTML = string;
+    })
+    document.getElementById('stop').addEventListener('click',()=>{
+        document.getElementById('stop').style.display='none';
+        document.getElementById('start').style.display='flex';
+        let today = new Date();
+        let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        localStorage.setItem(time," button 'stop' was pressed\n")
+        clearInterval(smth);
+        label.innerHTML="'Stop' pressed";
+    })
+    document.getElementById('start').addEventListener('click', ()=>{
+        square.style.backgroundColor = color;
+        square.style.width=size.toString()+"px";
+        square.style.height=size.toString()+"px";
+        let today = new Date();
+        let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        localStorage.setItem(time," button 'start' was pressed\n")
+        document.getElementById('start').style.display='none';
+        document.getElementById('stop').style.display='flex';
+
+        label.innerHTML="'Start' pressed";
+        let animWidth = parseInt(window.getComputedStyle(anim).width);
+        let animHeight = parseInt(window.getComputedStyle(anim).height);
+        smth = setInterval(()=>{
+        switch (index) {
+            case 0: {
+                square.style.marginLeft = clamp(parseInt(maxRight) + previousJump,0, animWidth-size).toString() + "px";
+                index = 1;
+                maxRight = square.style.marginLeft;
+                break;
+            }
+            case 1: {
+                square.style.marginTop = clamp(parseInt(maxBottom) + previousJump,0,animHeight-size).toString() + "px";
+                index = 2;
+                maxBottom = square.style.marginTop;
+                break;
+            }
+            case 2: {
+                square.style.marginLeft = clamp(parseInt(maxLeft) - previousJump, 0, animWidth-size).toString() + "px";
+                index = 3;
+                maxLeft = square.style.marginLeft;
+                break;
+            }
+            case 3: {
+                square.style.marginTop = clamp((parseInt(maxTop) - previousJump),0,animHeight-size).toString() + "px";
+                index = 0;
+                maxTop = square.style.marginTop;
+                break;
+            }
+        }
+        if(parseInt(maxLeft)<=0||parseInt(maxTop)<=0||parseInt(maxRight)+size>=animWidth||parseInt(maxBottom)+size>=animHeight) {
+            let today = new Date();
+            let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+            localStorage.setItem(time," square hit the wall\n")
+            document.getElementById('stop').style.display = 'none';
+            document.getElementById('reload').style.display = 'flex';
+            clearInterval(smth);
+        }previousJump+=1;
+        console.log(maxRight,maxBottom,maxLeft,maxTop,previousJump,animWidth, animHeight)
+        return index;
+        },interval);
+        console.log(smth + previousJump)
+    });
+    document.getElementById('reload').addEventListener('click', ()=>{
+        let today = new Date();
+        let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        localStorage.setItem(time," button 'reload' was pressed\n")
+        previousJump = 0;
+        document.getElementById('reload').style.display='none';
+        document.getElementById('stop').style.display='flex';
+
+        label.innerHTML="'Reload' pressed";
+        maxTop=startTop;
+        maxRight=startRight;
+        maxBottom=startBottom;
+        maxLeft=startLeft;
+        square.style.marginTop = startTop;
+        square.style.marginLeft = startLeft;
+        let animWidth = parseInt(window.getComputedStyle(anim).width);
+        let animHeight = parseInt(window.getComputedStyle(anim).height);
+        smth = setInterval(()=>{
+            switch (index) {
+                case 0: {
+                    square.style.marginLeft = clamp(parseInt(maxRight) + previousJump,0, animWidth-size).toString() + "px";
+                    index = 1;
+                    maxRight = square.style.marginLeft;
+                    break;
+                }
+                case 1: {
+                    square.style.marginTop = clamp(parseInt(maxBottom) + previousJump,0, animHeight-size).toString() + "px";
+                    index = 2;
+                    break;
+                }
+                case 2: {
+                    square.style.marginLeft = clamp(parseInt(maxLeft) - previousJump, 0, animWidth-size).toString() + "px";
+                    index = 3;
+                    maxLeft = square.style.marginLeft;
+                    break;
+                }
+                case 3: {
+                    square.style.marginTop = clamp((parseInt(maxTop) - previousJump),0,animHeight-size).toString() + "px";
+                    index = 0;
+                    maxTop = square.style.marginTop;
+                    break;
+                }
+            }
+            if(parseInt(maxLeft)<=0||parseInt(maxTop)<=0||parseInt(maxRight)+size>=animWidth||parseInt(maxBottom)+size>=animHeight)
+            {let today = new Date();
+                let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+                localStorage.setItem(time," square hit the wall\n")
+                document.getElementById('reload').style.display = 'flex';
+                document.getElementById('stop').style.display = 'none';
+                clearInterval(smth);
+            }
+            previousJump+=1;
+            console.log(maxRight,maxBottom,maxLeft,maxTop,previousJump,animWidth, animHeight)
+            return index;
+        },interval);
+        console.log(smth + previousJump)
+    })
+
+</script>
+</html>

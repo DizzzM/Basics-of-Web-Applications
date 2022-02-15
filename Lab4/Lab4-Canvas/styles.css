@@ -1,0 +1,50 @@
+body{
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+}
+canvas{
+    z-index: 10;
+}
+#work{
+    display: none;
+    width: calc(70vw + 100px);
+    height: calc(90vh + 50px);
+    border: 1px solid black;
+    justify-content: center;
+    flex-direction: column;
+    margin: auto;
+}
+#anim{
+    margin-left: -5px;
+    display: flex;
+    border: 5px solid red;
+    margin-top: auto;
+}
+.form{
+    display: flex;
+    margin: 2vh;
+    justify-content: space-around;
+    flex-direction: column;
+    padding: 0;
+}
+.controls{
+    padding: 0;
+    display: flex;
+    width: 100%;
+    height: 50px;
+    border: 1px solid black;
+    justify-content: space-between;
+    margin-bottom: auto;
+    flex-direction: row;
+}
+#square{
+    display: flex;
+    width: 10px;
+    height: 10px;
+    background-color: blue;
+    margin: auto;
+    transition: margin-top 500ms, margin-left 500ms;
+}

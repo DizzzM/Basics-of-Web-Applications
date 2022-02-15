@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 3, Admin page</title>
+    <link rel="stylesheet" href="style2.css">
+</head>
+<body>
+<div class ='form'>
+<div class="inputs" id = "inputs">
+    <div class="line">
+    <input type="text" value="text" id="input1">
+    <input type="text" value="image" id="image1">
+    </div>
+</div>
+<button class="save" id="saveButton"> Save </button>
+<button class="newLine" id="newLine"> New line </button>
+<a href="index1.html">Go to client page</a>
+</div>
+<script type="module">
+    import { initializeApp }
+        from 'https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js';
+    import {getDatabase, ref, set}
+        from 'https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js';
+
+    let lastInput = 1;
+    const firebaseConfig = {
+        apiKey: "AIzaSyAbwdXPSnD5bfN5GnijEHcGbZW3lS0H-kg",
+        authDomain: "lab3-8bea9.firebaseapp.com",
+        projectId: "lab3-8bea9",
+        storageBucket: "lab3-8bea9.appspot.com",
+        messagingSenderId: "838358364804",
+        appId: "1:838358364804:web:4db0e38af03d3bfb3288d1",
+        measurementId: "G-YCNJ97290T"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase();
+
+    function ReadContent(){
+        var inputs = [];
+        var images = [];
+        var i;
+        for(i=1; i <=lastInput; i++) {
+            var inputId = "input" + i.toString();
+            var imageId = "image" + i.toString();
+            var input = document.getElementById(inputId).value;
+            var image = document.getElementById(imageId).value;
+            if (input !== "text") {
+                inputs.push(input);
+                images.push(image);
+            }
+        }
+        return [inputs, images];
+    }
+
+    function NewInput(){
+        let code = document.getElementById('inputs');
+        lastInput++;
+        let newInput =
+            '<div class="line"> ' +
+                '<input type="text" value="text" id="input' + lastInput.toString() +'">' +
+                '<input type="text" value="image" id="image' + lastInput.toString() + '"> '   +
+            '</div>'
+        ;
+        code.innerHTML+=newInput;
+    }
+
+    function Set(){
+        var content = ReadContent();
+        set(ref(db),{
+            values: content[0],
+            images: content[1]
+        }).then(()=>{
+            alert("Data was sent to cloud!");
+        }).catch((error)=>{
+            alert("Unhandled error occured");
+        });
+    }
+
+
+    var saveButton = document.getElementById('saveButton');
+    saveButton.addEventListener("click", Set);
+    var newLine = document.getElementById('newLine');
+    newLine.addEventListener('click', NewInput);
+</script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+html,body{
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+body{
+    display: flex;
+}
+.inputs{
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    justify-content: space-between;
+}
+.save, .newLine, input, href{
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    margin: 5px;
+}
+.form{
+    display: flex;
+    justify-items: center;
+    align-items: center;
+    flex-direction: column;
+    margin: auto;
+}

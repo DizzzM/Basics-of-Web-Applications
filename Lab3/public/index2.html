@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab 3, Admin page</title>
+    <link rel="stylesheet" href="style2.css">
+</head>
+<body>
+<div class ='form'>
+<div class="inputs" id = "inputs">
+    <input type="text" id="input1">
+</div>
+<button class="save" id="saveButton"> Save </button>
+<button class="newLine" id="newLine"> New line </button>
+<a href="index1.html">Go to client page</a>
+</div>
+<script type="module">
+    import { initializeApp }
+        from 'https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js';
+    import {getDatabase, ref, set, child, update, remove}
+        from 'https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js';
+
+    let lastInput = 1;
+    const firebaseConfig = {
+        apiKey: "AIzaSyAbwdXPSnD5bfN5GnijEHcGbZW3lS0H-kg",
+        authDomain: "lab3-8bea9.firebaseapp.com",
+        projectId: "lab3-8bea9",
+        storageBucket: "lab3-8bea9.appspot.com",
+        messagingSenderId: "838358364804",
+        appId: "1:838358364804:web:4db0e38af03d3bfb3288d1",
+        measurementId: "G-YCNJ97290T"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase();
+
+    function ReadContent(){
+        var content = [];
+        var i;
+        for(i=1; i <=lastInput; i++)
+        {
+            var id = "input" + i.toString();
+            var input = document.getElementById(id);
+            content.push(input.value);
+        }
+        return content;
+    }
+
+    function NewInput(){
+        let code = document.getElementById('inputs');
+        lastInput++;
+        let newInput ='<input type="text" id="input' + (lastInput).toString() + '">';
+        code.innerHTML+=newInput;
+    }
+
+    function Set(){
+        var content = ReadContent();
+        console.log(content)
+        set(ref(db),{
+            contents: content
+        }).then(()=>{
+            alert("Data was sent to cloud!");
+        }).catch((error)=>{
+            alert("Unhandled error occured");
+        });
+    }
+
+
+    var saveButton = document.getElementById('saveButton');
+    saveButton.addEventListener("click", Set);
+    var newLine = document.getElementById('newLine');
+    newLine.addEventListener('click', NewInput);
+</script>
+</body>
+</html>

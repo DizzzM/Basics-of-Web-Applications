@@ -1,0 +1,192 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Lab 3, Client page</title>
+	<link rel="stylesheet" href="style1.css">
+</head>
+<body>
+
+<div class="form">
+    <button id="loadButton">Load data</button>
+<div id="slider">
+
+</div>
+<a href="index2.html">To admin page</a>
+</div>
+<script type="module">
+
+    import { initializeApp }
+        from 'https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js';
+    import {getDatabase, ref, child, get, onChildChanged}
+        from 'https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js';
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAbwdXPSnD5bfN5GnijEHcGbZW3lS0H-kg",
+        authDomain: "lab3-8bea9.firebaseapp.com",
+        projectId: "lab3-8bea9",
+        storageBucket: "lab3-8bea9.appspot.com",
+        messagingSenderId: "838358364804",
+        appId: "1:838358364804:web:4db0e38af03d3bfb3288d1",
+        measurementId: "G-YCNJ97290T"
+    };
+
+    var app = initializeApp(firebaseConfig);
+    var slideIndex = 0;
+
+    onChildChanged(ref(getDatabase()), (data) => {
+        let toReload = confirm('Content on cloud was reloaded. Confirm page refreshing:')
+        if (toReload)
+            location.reload();
+    });
+
+    window.onload = ()=>{
+        ReadDb();
+    }
+
+    let values=[];
+    let images=[];
+
+    function ReadDb(){
+        console.log("read")
+        const dbRef = ref(getDatabase());
+
+        get(child(dbRef, 'values')).then(snapshot=>{
+            snapshot.forEach(item=>{
+                values.push(item.val());
+            })
+        });
+        get(child(dbRef, 'images')).then(snapshot=>{
+            snapshot.forEach(item=>{
+                images.push(item.val());
+            })
+        });
+
+    }
+    function CreateSlider(){
+        ReadDb();
+		console.log(values)
+        let slider = document.getElementById('slider');
+        let style = document.createElement('style');
+
+		let controls = document.createElement('div')
+		controls.id = "controls"
+		let bullets = document.createElement('div')
+		bullets.id = "bullets"
+		let slides = document.createElement('div')
+		slides.id = "slides"
+		let overflow = document.createElement('div')
+		overflow.id = "overflow"
+		let inner = document.createElement('div')
+		inner.setAttribute('class', 'inner')
+
+		let sliderWidth = 100*values.length;
+
+		style.innerHTML+="#slides .inner {\n" +
+				"    transition: margin-left 800ms cubic-bezier(0.770, 0.000, 0.175, 1.000);\n" +
+				"    width: " + sliderWidth.toString() + "%;\n" +
+				"    line-height: 0;\n" +
+				"    height: 300px;\n" +
+				"}"
+		let widthPerSlide = 100/values.length
+		style.innerHTML+="#slides .slide {\n" +
+				"    width: "+widthPerSlide.toString()+"%;\n" +
+				"    float:left;\n" +
+				"    display: flex;\n" +
+				"    justify-content: center;\n" +
+				"    align-items: center;\n" +
+				"    height: 100%;\n" +
+				"    color: #fff;\n" +
+				"}"
+		for(let i = 0; i < values.length;i++){
+			let radioButton = document.createElement("input")
+			radioButton.type = "radio"
+			radioButton.name="radio"
+			if(i===0) radioButton.checked = true
+			radioButton.id = "slide" + (i+1).toString()
+			slider.appendChild(radioButton);
+
+			let slideLabel = document.createElement("label")
+			slideLabel.setAttribute('for', "slide" + (i+1).toString())
+			controls.appendChild(slideLabel)
+			bullets.appendChild(slideLabel)
+			style.innerHTML+=""
+            let item = document.createElement('div');
+            item.className = "slide slide_" + (i+1).toString();
+			item.innerHTML= '<div class="slide-content">' +
+								'<h2>'+ values[i] + '</h2> ' +
+							'</div>'
+            inner.appendChild(item);
+			style.innerHTML+="#slide"+(i+1).toString()+":checked ~ #slides .inner {\n" +
+					"    margin-left: -"+ (100*i).toString()+"%;\n" +
+					"}\n"
+			style.innerHTML+="#slides .slide_"+(i+1).toString()+"{\n"+
+				"background: no-repeat url(" + images[i]+")\n"+
+				"}\n"
+        }
+		for(let i = 0; i < values.length;i++){
+			if(i===values.length-1)
+				style.innerHTML+="#slide"+i.toString()+":checked ~ #bullets label:nth-child("+i.toString()+"){"
+			else
+				style.innerHTML+="#slide"+i.toString()+":checked ~ #bullets label:nth-child("+i.toString()+"),"
+		}
+		style.innerHTML+="    background: #444;\n" +
+				"}"
+		style.innerHTML+="    #slides {\n" +
+				"        max-width: calc(100% - 140px);\n" +
+				"        margin: 0 auto;\n" +
+				"    }"
+		overflow.appendChild(inner)
+		slides.appendChild(overflow)
+		slider.appendChild(slides)
+		slider.appendChild(controls)
+		slider.appendChild(bullets)
+		console.log(style.innerHTML);
+		document.head.appendChild(style)
+    }
+    function nextSlide() {
+
+            slideIndex += 1;
+            showSlides();
+    }
+
+    function prevSlide() {
+
+        slideIndex += -1;
+        showSlides();
+    }
+
+    function showSlides() {
+        if (slideIndex > values.length - 1) {
+            slideIndex = 0;
+        }
+        if (slideIndex < 0) {
+            slideIndex = values.length - 1;
+        }
+        let itemContent = document.getElementById('itemContent');
+        let itemImage = document.getElementById('itemImage');
+        itemContent.textContent = values[slideIndex];
+        itemImage.src = images[slideIndex];
+    }
+
+    //let prev = document.getElementById('prevButton')
+    //let next = document.getElementById('nextButton')
+    //prev.addEventListener("click", prevSlide)
+    //next.addEventListener("click", nextSlide);
+    let load = document.getElementById('loadButton')
+    load.addEventListener("click", CreateSlider);
+
+    function arraysEqual(a, b) {
+        if (a === b) return true;
+        if (a == null || b == null) return false;
+        if (a.length !== b.length) return false;
+
+
+        for (var i = 0; i < a.length; ++i) {
+            if (a[i] !== b[i]) return false;
+        }
+        return true;
+    }
+</script>
+</body>
+</html>
